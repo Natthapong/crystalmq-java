@@ -19,7 +19,6 @@ package crystalmq.java.camel;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
-import java.net.Socket;
 import java.util.Map;
 
 /**
@@ -27,49 +26,9 @@ import java.util.Map;
  */
 public class CrystalMQComponent extends DefaultComponent {
 
-    private Socket consumerSocket = null;
-    private Socket producerSocket = null;
-    private String topic;
-    private String channel;
-
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new CrystalMQEndpoint(uri, this);
         setProperties(endpoint, parameters);
         return endpoint;
-    }
-
-
-    public Socket getConsumerSocket() {
-        return consumerSocket;
-    }
-
-    public void setConsumerSocket(Socket consumerSocket) {
-        //this.consumerSocket = consumerSocket;
-    }
-
-    public void setProducerSocket(Socket producerSocket) {
-        this.producerSocket = producerSocket;
-    }
-
-    public Socket getProducerSocket() {
-        return producerSocket;
-    }
-
-
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
-
-    public String getChannel() {
-        return channel;
-    }
-
-    public void setChannel(String channel) {
-        this.channel = channel;
     }
 }
