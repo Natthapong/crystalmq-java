@@ -1,7 +1,6 @@
 package crystalmq.java.camel;
 
 import com.google.gson.Gson;
-import crystalmq.java.camel.Exception.ConsumerException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -11,6 +10,7 @@ import org.msgpack.type.Value;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
+import java.io.IOException;
 import java.net.Socket;
 
 /**
@@ -32,13 +32,22 @@ public class ConsumerThread implements Runnable {
 
     @Override
     public void run() {
+
+
+        DataInputStream is = null;
         try {
+            is = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
-            DataInputStream is = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
+        while (true) {
 
-            while (true) {
+            try {
 
-                byte[] byteData = receive(is);
+                byte[] byteData = new byte[0];
+                byteData = receive(is);
+
                 Value value = new MessagePack().read(byteData);
 
                 Exchange exchange = this.endpoint.createExchange();
@@ -54,20 +63,18 @@ public class ConsumerThread implements Runnable {
                     exchange.getIn().setBody(null);
                 }
                 process.process(exchange);
-            }
 
-        } catch (Exception e) {
-            throw new ConsumerException(e.getMessage());
+            } catch (Exception e) {
+                //nothing response
+            }
         }
+
+
     }
 
     public static byte[] receive(DataInputStream is) throws Exception {
-        try {
             byte[] inputData = new byte[1024];
             is.read(inputData);
             return inputData;
-        } catch (Exception exception) {
-            throw exception;
-        }
     }
 }
