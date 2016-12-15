@@ -1,5 +1,6 @@
 package crystalmq.java.camel;
 
+import com.google.gson.Gson;
 import crystalmq.java.camel.Exception.ConsumerException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -7,7 +8,6 @@ import org.apache.camel.Processor;
 import org.msgpack.MessagePack;
 import org.msgpack.type.MapValue;
 import org.msgpack.type.Value;
-import org.msgpack.type.ValueFactory;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
@@ -46,9 +46,9 @@ public class ConsumerThread implements Runnable {
                 if (value.isMapValue()) {
 
                     MapValue mapValue = value.asMapValue();
-                    String message = String.valueOf(mapValue.get(ValueFactory.createRawValue(MESSAGE)));
-                    message = message.substring(1, message.length() - 1);
-                    exchange.getIn().setBody(message);
+                    String message = mapValue.toString();
+                    CqmMessage cqmMessage = new Gson().fromJson(message, CqmMessage.class);
+                    exchange.getIn().setBody(cqmMessage.getMessage());
                 } else {
 
                     exchange.getIn().setBody(null);
