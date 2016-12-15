@@ -60,7 +60,7 @@ public class ConsumerThread implements Runnable {
                     exchange.getIn().setBody(cqmMessage.getMessage());
                 } else {
 
-                    exchange.getIn().setBody(null);
+                    exchange.getIn().setBody(new String(byteData));
                 }
                 process.process(exchange);
 
