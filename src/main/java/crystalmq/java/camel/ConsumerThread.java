@@ -45,8 +45,7 @@ public class ConsumerThread implements Runnable {
 
             try {
 
-                byte[] byteData = new byte[0];
-                byteData = receive(is);
+                byte[] byteData = receive(is);
 
                 Value value = new MessagePack().read(byteData);
 
@@ -73,7 +72,7 @@ public class ConsumerThread implements Runnable {
     }
 
     public static byte[] receive(DataInputStream is) throws Exception {
-            byte[] inputData = new byte[1024];
+            byte[] inputData = new byte[1024 * 10];
             is.read(inputData);
             return inputData;
     }
