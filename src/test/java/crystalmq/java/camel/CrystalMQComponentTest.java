@@ -59,8 +59,6 @@ public class CrystalMQComponentTest extends CamelTestSupport {
                             }
                         })
                         .to("crystalmq://producer?host=172.16.1.250&port=1234&topic=sunseries");
-
-                //
             }
         };
     }
