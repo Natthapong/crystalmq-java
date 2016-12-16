@@ -68,63 +68,63 @@ public class ConsumerThread implements Runnable {
     @Override
     public void run() {
 
+        consumeMessage();
+    }
+
+    private void consumeMessage() {
+
         try {
 
-                createClientSocket();
+            createClientSocket();
 
-                MessagePack messagePack = new MessagePack();
-                Template<Map<String, String>> template = tMap(TString, TString);
+            MessagePack messagePack = new MessagePack();
+            Template<Map<String, String>> template = tMap(TString, TString);
 
-                while (true) {
+            while (true) {
 
+                Map<String, String> map = messagePack.read(dataInputStream, template);
+                if (map.containsKey(MESSAGE)) {
+
+                    String message = map.get(MESSAGE);
                     try {
 
-                        Map<String, String> map = messagePack.read(dataInputStream, template);
+                        Exchange exchange = this.endpoint.createExchange();
+                        exchange.getIn().setBody(message);
+                        process.process(exchange);
+                    } catch (Exception ex) {
 
-                        if (map.containsKey(MESSAGE)) {
-
-                            String message = map.get(MESSAGE);
-                            Exchange exchange = this.endpoint.createExchange();
-                            exchange.getIn().setBody(message);
-                            process.process(exchange);
-                        }
-
-                    } catch (Exception e) {
-
-                        Thread.sleep(5000);
-                        log.error("Consumer exception  : {}", e);
-                        createClientSocket();
+                        log.error("Can not send Camel Exchange to next endpoint with message : {} ", message);
                     }
                 }
-
+            }
         } catch (Exception ex) {
-            ex.printStackTrace();
+
+            log.error("Consume message got and exception : {}, trying to create a new connection.", ex.getMessage());
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            consumeMessage();
         }
     }
 
+    /**
+     *
+     * @throws Exception when have and IOException
+     */
+    private void createClientSocket() throws Exception {
 
-    private void createClientSocket() throws IOException, InterruptedException {
-           try {
-               socket = new Socket(host, port);
-               registerTopicAndChannel();
-               dataInputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
-           } catch (Exception ex) {
-               log.error("Can not connect to host : {}, port : {} ", host, port);
-               log.error("Trying to connect again.");
-               Thread.sleep(3000);
-           }
+            socket = new Socket(host, port);
+            Map<String, Object> data = new HashMap();
+            data.put(TOPIC, topic);
+            data.put(CHANNEL, channel);
 
+            DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
+            dataOutputStream.write(new MessagePack().write(data));
+            dataOutputStream.flush();
+            dataInputStream = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
     }
 
-    private void registerTopicAndChannel() throws IOException {
-
-        Map<String, Object> data = new HashMap();
-        data.put(TOPIC, topic);
-        data.put(CHANNEL, channel);
-
-        DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-        dataOutputStream.write(new MessagePack().write(data));
-        dataOutputStream.flush();
-    }
 
 }
