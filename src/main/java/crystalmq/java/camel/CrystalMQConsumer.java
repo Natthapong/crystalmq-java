@@ -16,18 +16,12 @@
  */
 package crystalmq.java.camel;
 
-import crystalmq.java.camel.Exception.ConsumerException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.msgpack.MessagePack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
 import java.net.Socket;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The CrystalMQ consumer.
@@ -58,45 +52,25 @@ public class CrystalMQConsumer extends DefaultConsumer {
         String channel = this.getEndpoint().getEndpointConfiguration().getParameter(CHANNEL);
 
         try {
-            initialSocket(host, port, topic, channel);
 
-            Thread t = new Thread(new ConsumerThread(socket, this.endpoint, this.getProcessor()));
-            t.start();
-        } catch (ConsumerException ex) {
+            Thread consumerThread = new Thread(
+                    new ConsumerThread(this.endpoint,
+                    this.getProcessor(),
+                            host,
+                            Integer.valueOf(port),
+                            topic,
+                            channel)
+            );
+            consumerThread.start();
+
+        } catch (Exception ex) {
+
             log.error("Error on consumer router : {} ", ex.getMessage());
             Thread.sleep(3000);
             doStart();
         }
 
     }
-
-    private void initialSocket(String host, String port, String topic, String channel) throws IOException {
-
-        log.info("Create CrystalMQ consumer, host = {},port = {}", host, port);
-        log.info("Register topic = {},channel = {}", topic, channel);
-
-        if (socket == null || !socket.isConnected()) {
-
-            socket = new Socket(host, Integer.parseInt(port));
-            registerTopicAndChannel(topic, channel);
-            log.info("Socket created.");
-        }
-
-
-    }
-
-    private void registerTopicAndChannel(String topic, String channel) throws IOException {
-
-        Map<String, Object> data = new HashMap();
-        data.put(TOPIC, topic);
-        data.put(CHANNEL, channel);
-
-        DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream());
-        dataOutputStream.write(new MessagePack().write(data));
-        dataOutputStream.flush();
-    }
-
-
 
     @Override
     protected void doStop() throws Exception {
