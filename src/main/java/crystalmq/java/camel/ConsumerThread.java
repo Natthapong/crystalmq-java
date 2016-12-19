@@ -19,7 +19,7 @@ import java.util.Map;
 import static org.msgpack.template.Templates.TString;
 import static org.msgpack.template.Templates.tMap;
 
-//TODO : need to specific Exception later
+
 public class ConsumerThread implements Runnable {
 
     private static final transient Logger log = LoggerFactory.getLogger(ConsumerThread.class);
