@@ -1,11 +1,13 @@
-CrystalMQ Camel Component Project
-====================
+# CrystalMQ Camel Component Project
+
 This Project is a Camel component for CrystalMQ.
 
 
 
-application.yml
-==================
+* application.yml
+
+
+```
 crystal:
         server : ip
         port :
@@ -13,11 +15,12 @@ crystal:
           consumer : 1235
         topic : topic-name
         channel : channel-name
+```
+
+* Router Example
 
 
-Router Example
-===================
-
+```
 // set timer to send message every 10 secs to CrystalMQ
  from("timer://test?period=10s")
     .process(new Processor() {
@@ -39,10 +42,12 @@ from("crystalmq://consumer?host={{crystal.server}}&port={{crystal.port.consumer}
                 System.out.println("Consumer : " + exchange.getIn().getBody(String.class));
             }
         });
+```
+
+* Java Consumer Code Example
 
 
-Java Consumer Code Example
-=================================
+```
 import org.msgpack.MessagePack;
 import org.msgpack.template.Template;
 
@@ -99,10 +104,12 @@ public class Consumer {
     }
 
 }
+```
+
+* Java Producer Code Example
 
 
-Java Producer Code Example
-==========================
+```
 import com.google.gson.Gson;
 import org.msgpack.MessagePack;
 
@@ -149,3 +156,4 @@ public class Producer {
 
     }
 }
+```
