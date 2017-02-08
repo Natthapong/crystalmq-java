@@ -60,7 +60,7 @@ public class CrystalMQConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
         log.info("Stopping CrystalMQ consumer");
-        if (socket.isConnected()) {
+        if (socket != null && socket.isConnected()) {
             socket.close();
         }
     }

@@ -68,12 +68,24 @@ public class ConsumerThread implements Runnable {
     @Override
     public void run() {
 
-        consumeMessage();
+     while (true) {
+         try {
+
+             consumeMessage();
+
+         } catch (Exception ex) {
+             log.error("Consume message got and exception : {}, trying to create a new connection.", ex.getMessage());
+             try {
+                 Thread.sleep(3000);
+             } catch (InterruptedException e) {
+                 e.printStackTrace();
+             }
+         }
+     }
+
     }
 
-    private void consumeMessage() {
-
-        try {
+    private void consumeMessage() throws Exception {
 
             createClientSocket();
 
@@ -97,16 +109,7 @@ public class ConsumerThread implements Runnable {
                     }
                 }
             }
-        } catch (Exception ex) {
 
-            log.error("Consume message got and exception : {}, trying to create a new connection.", ex.getMessage());
-            try {
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            consumeMessage();
-        }
     }
 
     /**
