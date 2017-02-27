@@ -68,20 +68,21 @@ public class ConsumerThread implements Runnable {
     @Override
     public void run() {
 
-     while (true) {
+    // while (true) {
          try {
 
              consumeMessage();
 
          } catch (Exception ex) {
-             log.error("Consume message got and exception : {}, trying to create a new connection.", ex.getMessage());
+             /*log.error("Consume message got and exception : {}, trying to create a new connection.", ex.getMessage());
              try {
                  Thread.sleep(3000);
              } catch (InterruptedException e) {
                  e.printStackTrace();
-             }
+             }*/
+             throw new RuntimeException(ex);
          }
-     }
+     //}
 
     }
 

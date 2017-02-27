@@ -62,8 +62,9 @@ public class CrystalMQProducer extends DefaultProducer {
             dataOutputStream.flush();
         } catch (SocketException ex) {
 
-            socket = null;
-            sendMessageToTopic(topic, message, host, port);
+            /*socket = null;
+            sendMessageToTopic(topic, message, host, port);*/
+            throw new RuntimeException(ex);
 
         }
 
