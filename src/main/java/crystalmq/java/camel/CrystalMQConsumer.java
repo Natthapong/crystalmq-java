@@ -35,7 +35,6 @@ public class CrystalMQConsumer extends DefaultConsumer {
         String topic = this.getEndpoint().getEndpointConfiguration().getParameter(TOPIC);
         String channel = this.getEndpoint().getEndpointConfiguration().getParameter(CHANNEL);
 
-        try {
 
             Thread consumerThread = new Thread(
                     new ConsumerThread(this.endpoint,
@@ -47,12 +46,6 @@ public class CrystalMQConsumer extends DefaultConsumer {
             );
             consumerThread.start();
 
-        } catch (Exception ex) {
-
-            log.error("Error on consumer router : {} ", ex.getMessage());
-            Thread.sleep(3000);
-            doStart();
-        }
 
     }
 

@@ -74,6 +74,7 @@ public class ConsumerThread implements Runnable {
              consumeMessage();
 
          } catch (Exception ex) {
+             ex.printStackTrace();
              /*log.error("Consume message got and exception : {}, trying to create a new connection.", ex.getMessage());
              try {
                  Thread.sleep(3000);
