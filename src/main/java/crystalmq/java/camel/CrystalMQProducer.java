@@ -85,7 +85,7 @@ public class CrystalMQProducer extends DefaultProducer {
     protected void doStop() throws Exception {
         super.doStop();
         log.info("Stopping CrystalMQ producer");
-        if (socket.isConnected()) {
+        if (socket !=null && socket.isConnected()) {
             socket.close();
         }
     }
