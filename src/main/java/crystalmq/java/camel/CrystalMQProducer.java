@@ -70,6 +70,7 @@ public class CrystalMQProducer extends DefaultProducer {
             throw new RuntimeException(ex);
 
         } finally {
+            log.info("close the connection");
             socket = null;
         }
 
