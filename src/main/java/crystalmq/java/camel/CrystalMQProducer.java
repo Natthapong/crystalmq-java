@@ -69,6 +69,8 @@ public class CrystalMQProducer extends DefaultProducer {
             sendMessageToTopic(topic, message, host, port);*/
             throw new RuntimeException(ex);
 
+        } finally {
+            socket = null;
         }
 
     }
