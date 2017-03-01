@@ -71,7 +71,9 @@ public class CrystalMQProducer extends DefaultProducer {
 
         } finally {
             log.info("close the connection");
-            socket = null;
+            if (socket !=null && socket.isConnected()) {
+                socket.close();
+            }
         }
 
     }
