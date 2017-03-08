@@ -65,15 +65,8 @@ public class CrystalMQProducer extends DefaultProducer {
             log.error("Producer error {} ", ex.getMessage());
             log.error("================================");
             ex.printStackTrace();
-            /*socket = null;
-            sendMessageToTopic(topic, message, host, port);*/
             throw new RuntimeException(ex);
-
-        } finally {
-            log.info("close the connection");
-            socket = null;
         }
-
     }
 
     private void initialSocket(String host, String port) throws IOException {
